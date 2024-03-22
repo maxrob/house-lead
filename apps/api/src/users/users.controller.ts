@@ -6,7 +6,7 @@ export class UsersController {
   constructor(private userService: UsersService) {}
 
   @HttpCode(HttpStatus.OK)
-  @Get('user')
+  @Get('me')
   user(@Request() req) {
     return this.userService.user({ email: req.user.email });
   }
