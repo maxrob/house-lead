@@ -24,7 +24,7 @@ export class AuthService {
       },
     });
 
-    const payload = { sub: user.user_id, email: user.email };
+    const payload = { userId: user.userId, email: user.email };
 
     return {
       access_token: await this.jwtService.signAsync(payload),
@@ -37,6 +37,10 @@ export class AuthService {
   ): Promise<{ access_token: string }> {
     const user = await this.prisma.user.findUnique({ where: { email } });
 
+    if (!user) {
+      throw new UnauthorizedException();
+    }
+
     const salt = await bcrypt.genSalt();
     const hash = await bcrypt.hash(password, salt);
     const isMatch = await bcrypt.compare(hash, user.password);
@@ -45,7 +49,7 @@ export class AuthService {
       throw new UnauthorizedException();
     }
 
-    const payload = { sub: user.user_id, email: user.email };
+    const payload = { userId: user.userId, email: user.email };
     return {
       access_token: await this.jwtService.signAsync(payload),
     };

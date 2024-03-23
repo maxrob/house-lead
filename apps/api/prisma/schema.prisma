@@ -14,11 +14,28 @@ datasource db {
 }
 
 model User {
-  user_id Int @default(autoincrement()) @id
+  userId String @default(cuid()) @id @map("user_id")
   email String @unique
   password String
   firstName String @map("first_name")
   lastName String @map("last_name")
+  house   House? @relation(fields: [houseId], references: [houseId])
+  houseId String?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 
   @@map("users")
+}
+
+model House {
+  houseId String @default(cuid()) @id @map("house_id")
+  address String
+  postalCode String @map("postal_code")
+  city String
+  code String?
+  users User[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@map("houses")
 }
